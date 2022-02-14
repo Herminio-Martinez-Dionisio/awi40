@@ -10,10 +10,27 @@ urls = (
     '/login', 'Login',
     '/bienvenida', 'Bienvenida',
     '/error_cont','Error_cont',
-    '/error_email','Error_email'
+    '/error_email','Error_email',
+    '/logout','Logout'
 )
 app = web.application(urls, globals())
 render = web.template.render('views')
+
+class Logout:
+    def GET(self):
+        web.setcookie('localID', None)
+        return render.login()
+
+class Bienvenida:
+    def GET(self):
+        try:
+            print("Bienvenida.GET localID: ",web.cookies().get('localID')) 
+            if web.cookies().get('localID') == None:
+                return render.login()
+            else: 
+                return render.bienvenida() 
+        except Exception as error: 
+            print("Error Bienvenida.GET: {}".format(error)) 
 
 class Login:
     def GET(self):
@@ -35,6 +52,16 @@ class Login:
             password = formulario.password
             user = auth.sign_in_with_email_and_password(email, password)
             print(user['localId'])
+
+            #informacion = auth.get_account_info(user['idToken'])
+            #usuarios = informacion['users']
+            #usuario = usuarios[0]
+            #localid = usuario['localId']
+            #web.setcookie('localid', localId)
+
+            web.setcookie('localID', user['localId']) # se almacena en una cookie el localID
+            print("localId : ",web.cookies().get('localID'))
+
             #message = "Bienvenido"
             #return render.login(message)
             return render.bienvenida()
