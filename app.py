@@ -11,7 +11,8 @@ urls = (
     '/bienvenida', 'Bienvenida',
     '/error_cont','Error_cont',
     '/error_email','Error_email',
-    '/logout','Logout'
+    '/logout','Logout',
+    '/recuperar_password', 'recuperar'
 )
 app = web.application(urls, globals())
 render = web.template.render('views')
@@ -79,8 +80,17 @@ class Login:
             #return render.login(message1)
             #print(error['message'])
             #return render.login()
-            
-            
+class recuperar_password:
+    
+    def GET(self):
+        return web.seeother("recuperar_password")
+    def POST(self):
+        recuperar_datos = web.input()
+        email = recuperar_datos.correo_r
+        print(email, "recuperando contraseña")            
+
+        result = auth.send_password_reset_email(email)
+        print(result)    
 
 if __name__ == "__main__":
     web.config.debug = False
